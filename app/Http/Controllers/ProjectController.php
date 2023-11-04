@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Images;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Str;
 
@@ -45,9 +47,39 @@ class ProjectController extends Controller
         return redirect()->route('project.index');
     }
 
-    public function show(Project $project)
+    public function images(Project $project)
     {
-        //
+        return view('admin.projects.images', compact('project'));
+    }
+
+    public function storeimages(Request $request)
+    {
+        $image = $request->file('file');
+        $imageName = time().rand(1,100) . '.' . $image->extension();
+        $image->move(public_path('images'), $imageName);
+        return response()->json(['success' => $imageName]);
+        //first try
+        // $images = $request->file('file')->store('public/images');
+        // $url = Storage::url($images);
+
+        // Images::create([
+        //     'url' => $url,
+        //     'project_id' => $project->id
+        // ]);
+        // second try
+        // if ($request->file('file')) {
+        //     $name = Str::random(10) . $request->file('file')->getClientOriginalName();
+        //     $ruta = storage_path() . '\app\public\images/' . $name;
+        //     Image::make($request->file('file'))->resize(1200, null, function ($constraint) {
+        //         $constraint->aspectRatio();
+        //     })->save($ruta);
+        // }
+
+        // Images::create([
+        //     'url' => '/storage/images/' . $name,
+        //     'project_id' => $project->id
+        // ]);
+        // return view('admin.projects.images', compact('project'));
     }
 
     public function edit(Project $project)

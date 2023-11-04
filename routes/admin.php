@@ -23,4 +23,8 @@ Route::put('/proyectos/{project}', [ProjectController::class, 'update'])->name('
 
 Route::delete('/proyectos/{project}', [ProjectController::class, 'destroy'])->name('project.destroy');
 
+Route::get('/proyectos/{project}/images', [ProjectController::class, 'images'])->name('project.images');
 
+Route::post('/proyectos/images', [ProjectController::class, 'storeimages'])->name('project.images.store');
+
+// Route::put('/proyectos/{project}/images', [ProjectController::class, 'storeimages'])->name('project.images.update');
