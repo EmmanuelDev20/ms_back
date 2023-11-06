@@ -16,13 +16,26 @@ class CreateProjectsTable extends Migration
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
 
-            $table->string('name');
             $table->string('url_main_image')->nullable();
-            $table->string('subtitle');
-            $table->text('description');
-            $table->text('work_made');
 
             $table->timestamps();
+        });
+
+        Schema::create('project_translations', function (Blueprint $table) {
+            $table->id();
+            $table->bigInteger('project_id')->unsigned();
+            $table->string('locale')->index();
+            $table->unique(['project_id', 'locale']);
+            $table->foreign('project_id')
+                  ->references('id')
+                  ->on('projects')
+                  ->onDelete('cascade');
+
+            // Translatable tables
+            $table->string('name')->nullable();
+            $table->string('subtitle')->nullable();
+            $table->text('description')->nullable();
+            $table->text('work_made')->nullable();
         });
     }
 
@@ -34,5 +47,6 @@ class CreateProjectsTable extends Migration
     public function down()
     {
         Schema::dropIfExists('projects');
+        Schema::dropIfExists('project_translations');
     }
 }

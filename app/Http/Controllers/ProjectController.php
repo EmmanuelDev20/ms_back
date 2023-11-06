@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Images;
 use App\Models\Project;
+use App\Models\ProjectTranslation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
@@ -25,7 +26,9 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'url_main_image' => 'image'
+            'url_main_image' => 'image',
+            'name' => 'required',
+            'name_english' => 'required'
         ]);
 
         if ($request->file('url_main_image')) {
@@ -36,12 +39,26 @@ class ProjectController extends Controller
             })->save($ruta);
         }
 
-        Project::create([
-            'url_main_image' => $request->file('url_main_image') ? '/storage/images/' . $name : null,
+        $project = Project::create([
+            'url_main_image' => $request->file('url_main_image') ? '/storage/images/' . $name : null
+        ]);
+
+        ProjectTranslation::create([
+            'project_id' => $project->id,
+            'locale' => 'es',
             'name' => $request->name,
             'subtitle' => $request->subtitle,
             'description' => $request->description,
-            'work_made' => $request->work_made,
+            'work_made' => $request->work_made
+        ]);
+
+        ProjectTranslation::create([
+            'project_id' => $project->id,
+            'locale' => 'en',
+            'name' => $request->name_english,
+            'subtitle' => $request->subtitle_english,
+            'description' => $request->description_english,
+            'work_made' => $request->work_made_english
         ]);
 
         return redirect()->route('project.index');
@@ -57,7 +74,7 @@ class ProjectController extends Controller
         $image = $request->file('file');
         $imageName = time().rand(1,100) . '.' . $image->extension();
         $image->move(public_path('images'), $imageName);
-        return response()->json(['success' => $imageName]);
+        // return response()->json(['success' => $imageName]);
         //first try
         // $images = $request->file('file')->store('public/images');
         // $url = Storage::url($images);
@@ -84,7 +101,18 @@ class ProjectController extends Controller
 
     public function edit(Project $project)
     {
-        return view('admin.projects.edit', compact('project'));
+        $spanish_data = [];
+        $english_data = [];
+
+        foreach($project->translations as $project_lang) :
+            if($project_lang->locale === 'es' ) :
+                $spanish_data = $project_lang;
+            else :
+                $english_data = $project_lang;
+            endif;
+        endforeach;
+
+        return view('admin.projects.edit', compact('project', 'spanish_data', 'english_data'));
     }
 
     public function update(Request $request, Project $project)
@@ -104,10 +132,22 @@ class ProjectController extends Controller
             $project->url_main_image = $new_url_main_image;
         }
 
-        $project->name = $request->name;
-        $project->subtitle = $request->subtitle;
-        $project->description = $request->description;
-        $project->work_made = $request->work_made;
+        foreach($project->translations as $project_lang) :
+            if($project_lang->locale === 'es' ) :
+                $project_lang->name = $request->name;
+                $project_lang->subtitle = $request->subtitle;
+                $project_lang->description = $request->description;
+                $project_lang->work_made = $request->work_made;
+                else :
+                $project_lang->name = $request->name_english;
+                $project_lang->subtitle = $request->subtitle_english;
+                $project_lang->description = $request->description_english;
+                $project_lang->work_made = $request->work_made_english;
+            endif;
+        endforeach;
+
+        // if()
+
 
         $project->save();
 

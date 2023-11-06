@@ -8,12 +8,8 @@
 
 @section('content')
     <p>Bienvenido al panel administrativo.</p>
-@stop
 
-{{-- @section('css')
-    <link rel="stylesheet" href="/css/admin_custom.css">
-@stop
+    {{-- <p>@lang('messages.select_lang')</p>
+    <p>{{__('messages.contact')}}</p> --}}
 
-@section('js')
-    <script> console.log('Hi!'); </script>
-@stop --}}
+@stop

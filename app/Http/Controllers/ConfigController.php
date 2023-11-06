@@ -10,29 +10,36 @@ use Illuminate\Support\Str;
 
 class ConfigController extends Controller
 {
+    public function index_api()
+    {
+        return 'hola mundo';
+    }
+
     public function index()
     {
         $configArray = Config::all();
+
+        $spanish_data = [];
+        $english_data = [];
+
+        foreach($configArray[0]->translations as $conf) :
+            if($conf->locale === 'es' ) :
+                $spanish_data = $conf;
+            else :
+                $english_data = $conf;
+            endif;
+        endforeach;
+        // return Config::all();
+        // $configArray = Config::all();
         $config = $configArray[0];
-        return view('admin.config.index', compact('config'));
+        return view('admin.config.index', compact('config', 'spanish_data', 'english_data'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         // return $config;
@@ -97,12 +104,7 @@ class ConfigController extends Controller
         return redirect()->route('config.index');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Config  $config
-     * @return \Illuminate\Http\Response
-     */
+
     public function show(Config $config)
     {
         //
@@ -116,6 +118,8 @@ class ConfigController extends Controller
     public function update(Request $request, Config $config)
     {
         $request->validate([
+            'home_description' => 'required',
+            'about_us_description' => 'required',
             'home_image' => 'image',
             'first_image' => 'image',
             'second_image' => 'image',
@@ -174,20 +178,24 @@ class ConfigController extends Controller
             $config->about_image = $new_about_image;
         }
 
-        $config->home_description = $request->home_description;
-        $config->about_us_description = $request->about_us_description;
+        foreach($config->translations as $conf) :
+            if($conf->locale === 'es' ) :
+                $conf->home_description = $request->home_description;
+                $conf->about_us_description = $request->about_us_description;
+                else :
+                $conf->home_description = $request->home_description_english;
+                $conf->about_us_description = $request->about_us_description_english;
+            endif;
+        endforeach;
+
+        // $config->home_description = $request->home_description;
+        // $config->about_us_description = $request->about_us_description;
 
         $config->save();
 
         return redirect()->route('config.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Config  $config
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Config $config)
     {
         //

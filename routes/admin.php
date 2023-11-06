@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\ConfigController;
+use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\ProjectController;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index']);
@@ -23,8 +25,14 @@ Route::put('/proyectos/{project}', [ProjectController::class, 'update'])->name('
 
 Route::delete('/proyectos/{project}', [ProjectController::class, 'destroy'])->name('project.destroy');
 
-Route::get('/proyectos/{project}/images', [ProjectController::class, 'images'])->name('project.images');
+Route::get('/proyectos/{project}/images', [ImagesController::class, 'index'])->name('images.index');
 
-Route::post('/proyectos/images', [ProjectController::class, 'storeimages'])->name('project.images.store');
+Route::post('/proyectos/{project}/images', [ImagesController::class, 'store'])->name('images.store');
 
-// Route::put('/proyectos/{project}/images', [ProjectController::class, 'storeimages'])->name('project.images.update');
+Route::delete('/proyectos/{image}/images/{project}', [ImagesController::class, 'destroy'])->name('images.destroy');
+
+Route::get('/locale/{locale}', function($locale) {
+    App::setLocale($locale);
+});
+
+
