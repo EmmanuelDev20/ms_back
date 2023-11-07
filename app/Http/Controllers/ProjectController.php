@@ -41,10 +41,16 @@ class ProjectController extends Controller
             'name' => 'required',
             'name_english' => 'required'
         ]);
-
+        // $probando_ruta
+        // C:\xampp\htdocs\js_projects\ms_ingenieria\ms_scratch_jet_back\storage\app\public\images/cGDBnGDTXIExterior A full.jpg
+        // $ruta
+        // C:\xampp\htdocs\js_projects\ms_ingenieria\ms_scratch_jet_back\public\images/ng0g883BD1Exterior A full.jpg
         if ($request->file('url_main_image')) {
             $name = Str::random(10) . $request->file('url_main_image')->getClientOriginalName();
             $ruta = storage_path() . '\app\public\images/' . $name;
+            // $probandoruta = storage_path() . '\app\public\images/' . $name;
+            // $ruta = public_path('images/'.$name);
+
             Image::make($request->file('url_main_image'))->resize(1200, null, function ($constraint) {
                 $constraint->aspectRatio();
             })->save($ruta);
