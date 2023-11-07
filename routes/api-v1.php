@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ConfigController;
+use App\Http\Controllers\ProjectController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,3 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/config', [ConfigController::class, 'index_api'])->name('api.config.index');
+
+Route::get('/proyectos', [ProjectController::class, 'index_api'])->name('api.projects.index');
+
+Route::get('/proyectos/{project}', [ProjectController::class, 'show_api'])->name('api.projects.show');

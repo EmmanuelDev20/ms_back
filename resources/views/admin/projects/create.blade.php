@@ -11,7 +11,11 @@
         @csrf
 
         <div class="custom-file mb-4">
-            <input type="file" accept="image/*" class="custom-file-input" id="url_main_image" name="url_main_image">
+            <input type="file"
+                   accept="image/*"
+                   class="custom-file-input"
+                   id="url_main_image"
+                   name="url_main_image">
             <label class="custom-file-label" for="url_main_image">Elegir imagen principal</label>
             @error('url_main_image')
             <div class="error">* Por favor seleccione una archivo válido.</div>
@@ -22,8 +26,13 @@
 
         <div class="form-group">
             <label for="name">Nombre</label>
-            <input type="text" class="form-control" id="name" name="name" aria-describedby="emailHelp"
-                placeholder="Nombre">
+            <input type="text"
+                   class="form-control"
+                   value="{{ old('name') }}"
+                   id="name"
+                   name="name"
+                   aria-describedby="emailHelp"
+                   placeholder="Nombre">
             @error('name')
             <div class="error">* Debes ingresar un nombre.</div>
             @enderror
@@ -31,13 +40,24 @@
 
         <div class="form-group">
             <label for="subtitle">Subtítulo</label>
-            <input type="text" class="form-control" id="subtitle" name="subtitle" aria-describedby="emailHelp"
-                placeholder="Subtítulo">
+            <input type="text"
+                   class="form-control"
+                   value="{{ old('subtitle') }}"
+                   id="subtitle"
+                   name="subtitle"
+                   aria-describedby="emailHelp"
+                   placeholder="Subtítulo">
         </div>
 
         <div class="form-group">
             <label for="description">Descripción</label>
-            <input type="text" class="form-control" id="description" name="description" aria-describedby="emailHelp" placeholder="Subtítulo">
+            <input type="text"
+                   class="form-control"
+                   value="{{ old('description') }}"
+                   id="description"
+                   name="description"
+                   aria-describedby="emailHelp"
+                   placeholder="Subtítulo">
         </div>
 
         <div class="form-group">
@@ -47,6 +67,7 @@
                 name="work_made"
                 cols="30"
                 rows="10">
+                {{ old('work_made') }}
             </textarea>
         </div>
 
@@ -54,7 +75,13 @@
 
         <div class="form-group">
             <label for="name_english">Nombre</label>
-            <input type="text" class="form-control" id="name_english" name="name_english" aria-describedby="emailHelp" placeholder="Nombre">
+            <input type="text"
+                   value="{{ old('name_english') }}"
+                   class="form-control"
+                   id="name_english"
+                   name="name_english"
+                   aria-describedby="emailHelp"
+                   placeholder="Nombre">
             @error('name_english')
             <div class="error">* Debes ingresar un nombre.</div>
             @enderror
@@ -62,13 +89,24 @@
 
         <div class="form-group">
             <label for="subtitle_english">Subtítulo</label>
-            <input type="text" class="form-control" id="subtitle_english" name="subtitle_english" aria-describedby="emailHelp"
-                placeholder="Subtítulo">
+            <input type="text"
+                   value="{{ old('subtitle_english') }}"
+                   class="form-control"
+                   id="subtitle_english"
+                   name="subtitle_english"
+                   aria-describedby="emailHelp"
+                   placeholder="Subtítulo">
         </div>
 
         <div class="form-group">
             <label for="description_english">Descripción</label>
-            <input type="text" class="form-control" id="description_english" name="description_english" aria-describedby="emailHelp" placeholder="Subtítulo">
+            <input type="text"
+                   value="{{ old('description_english') }}"
+                   class="form-control"
+                   id="description_english"
+                   name="description_english"
+                   aria-describedby="emailHelp"
+                   placeholder="Subtítulo">
         </div>
 
         <div class="form-group">
@@ -78,6 +116,7 @@
                 name="work_made_english"
                 cols="30"
                 rows="10">
+                {{ old('work_made_english') }}
             </textarea>
         </div>
 

@@ -12,7 +12,10 @@ class ConfigController extends Controller
 {
     public function index_api()
     {
-        return 'hola mundo';
+        $configs = Config::all();
+        $result = $configs[0]->translate('en');
+        // return $result;
+        return $configs[0];
     }
 
     public function index()

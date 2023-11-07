@@ -12,6 +12,17 @@ use Illuminate\Support\Str;
 
 class ProjectController extends Controller
 {
+    public function index_api()
+    {
+        $projects = Project::all();
+        return $projects;
+    }
+    public function show_api($id)
+    {
+        $projects = Project::with('images')->findOrFail($id);
+
+        return $projects;
+    }
     public function index()
     {
         $projects = Project::all();
@@ -72,7 +83,7 @@ class ProjectController extends Controller
     public function storeimages(Request $request)
     {
         $image = $request->file('file');
-        $imageName = time().rand(1,100) . '.' . $image->extension();
+        $imageName = time() . rand(1, 100) . '.' . $image->extension();
         $image->move(public_path('images'), $imageName);
         // return response()->json(['success' => $imageName]);
         //first try
@@ -104,8 +115,8 @@ class ProjectController extends Controller
         $spanish_data = [];
         $english_data = [];
 
-        foreach($project->translations as $project_lang) :
-            if($project_lang->locale === 'es' ) :
+        foreach ($project->translations as $project_lang) :
+            if ($project_lang->locale === 'es') :
                 $spanish_data = $project_lang;
             else :
                 $english_data = $project_lang;
@@ -132,13 +143,13 @@ class ProjectController extends Controller
             $project->url_main_image = $new_url_main_image;
         }
 
-        foreach($project->translations as $project_lang) :
-            if($project_lang->locale === 'es' ) :
+        foreach ($project->translations as $project_lang) :
+            if ($project_lang->locale === 'es') :
                 $project_lang->name = $request->name;
                 $project_lang->subtitle = $request->subtitle;
                 $project_lang->description = $request->description;
                 $project_lang->work_made = $request->work_made;
-                else :
+            else :
                 $project_lang->name = $request->name_english;
                 $project_lang->subtitle = $request->subtitle_english;
                 $project_lang->description = $request->description_english;
