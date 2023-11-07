@@ -49,12 +49,14 @@ class ProjectController extends Controller
         // $ruta = public_path('images/'.$name);
         if ($request->file('url_main_image')) {
             $name = Str::random(10) . $request->file('url_main_image')->getClientOriginalName();
-            $ruta = storage_path() . '\app\public\images/' . $name;
-            $ruta = storage_path("\app\public\images/".$name);
+            // $ruta = storage_path() . '\app\public\images/' . $name;
+            $ruta = storage_path("app\public\images/".$name);
+            $probandoruta = public_path('storage/images/'.$name);
+            // dd($ruta, $probandoruta);
 
             Image::make($request->file('url_main_image'))->resize(1200, null, function ($constraint) {
                 $constraint->aspectRatio();
-            })->save($ruta);
+            })->save($probandoruta);
         }
 
         $project = Project::create([
