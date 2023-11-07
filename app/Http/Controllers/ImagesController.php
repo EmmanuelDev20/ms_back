@@ -42,7 +42,8 @@ class ImagesController extends Controller
     public function store(Request $request, Project $project)
     {
         $name = Str::random(10) . $request->file('file')->getClientOriginalName();
-        $ruta = storage_path() . '\app\public\images/' . $name;
+        // $ruta = storage_path() . '\app\public\images/' . $name;
+        $ruta = public_path('storage/images/'.$name);
         Image::make($request->file('file'))->resize(1200, null, function ($constraint) {
             $constraint->aspectRatio();
         })->save($ruta);

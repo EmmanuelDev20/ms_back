@@ -132,7 +132,9 @@ class ConfigController extends Controller
 
         if ($request->file('home_image')) {
             $name = Str::random(10) . $request->file('home_image')->getClientOriginalName();
-            $ruta = storage_path() . '\app\public\images/' . $name;
+            $probandoruta = public_path('storage/images/'.$name);
+            // $ruta = storage_path() . '\app\public\images/' . $name;
+            $ruta = public_path('storage/images/'.$name);
             Image::make($request->file('home_image'))->resize(1200, null, function ($constraint) {
                 $constraint->aspectRatio();
             })->save($ruta);
@@ -142,7 +144,8 @@ class ConfigController extends Controller
         }
         if ($request->file('first_image')) {
             $name = Str::random(10) . $request->file('first_image')->getClientOriginalName();
-            $ruta = storage_path() . '\app\public\images/' . $name;
+            // $ruta = storage_path() . '\app\public\images/' . $name;
+            $ruta = public_path('storage/images/'.$name);
             Image::make($request->file('first_image'))->resize(1200, null, function ($constraint) {
                 $constraint->aspectRatio();
             })->save($ruta);
@@ -152,7 +155,8 @@ class ConfigController extends Controller
         }
         if ($request->file('second_image')) {
             $name = Str::random(10) . $request->file('second_image')->getClientOriginalName();
-            $ruta = storage_path() . '\app\public\images/' . $name;
+            // $ruta = storage_path() . '\app\public\images/' . $name;
+            $ruta = public_path('storage/images/'.$name);
             Image::make($request->file('second_image'))->resize(1200, null, function ($constraint) {
                 $constraint->aspectRatio();
             })->save($ruta);
@@ -162,7 +166,8 @@ class ConfigController extends Controller
         }
         if ($request->file('third_image')) {
             $name = Str::random(10) . $request->file('third_image')->getClientOriginalName();
-            $ruta = storage_path() . '\app\public\images/' . $name;
+            // $ruta = storage_path() . '\app\public\images/' . $name;
+            $ruta = public_path('storage/images/'.$name);
             Image::make($request->file('third_image'))->resize(1200, null, function ($constraint) {
                 $constraint->aspectRatio();
             })->save($ruta);
@@ -172,7 +177,8 @@ class ConfigController extends Controller
         }
         if ($request->file('about_image')) {
             $name = Str::random(10) . $request->file('about_image')->getClientOriginalName();
-            $ruta = storage_path() . '\app\public\images/' . $name;
+            // $ruta = storage_path() . '\app\public\images/' . $name;
+            $ruta = public_path('storage/images/'.$name);
             Image::make($request->file('about_image'))->resize(1200, null, function ($constraint) {
                 $constraint->aspectRatio();
             })->save($ruta);
