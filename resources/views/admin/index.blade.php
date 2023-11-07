@@ -9,7 +9,9 @@
 @section('content')
     <p>Bienvenido al panel administrativo.</p>
 
-    {{-- <p>@lang('messages.select_lang')</p>
-    <p>{{__('messages.contact')}}</p> --}}
+    <form action="{{ route('hookNetlify') }}" method="POST">
+        @csrf
+        <button class="btn btn-info" type="submit">Regenerar front</button>
+    </form>
 
 @stop

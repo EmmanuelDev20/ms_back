@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index']);
 
+Route::post('/hookNetlify', [HomeController::class, 'hookNetlify'])->name('hookNetlify');
+
 Route::get('/configuracion', [ConfigController::class, 'index'])->name('config.index');
 
 Route::put('/configuracion/{config}', [ConfigController::class, 'update'])->name('config.update');
