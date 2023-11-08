@@ -62,7 +62,7 @@
             id="description"
             name="description"
             aria-describedby="emailHelp"
-            placeholder="Subtítulo">
+            placeholder="Descripción">
         </div>
 
         <div class="form-group">
@@ -111,7 +111,7 @@
             id="description_english"
             name="description_english"
             aria-describedby="emailHelp"
-            placeholder="Subtítulo">
+            placeholder="Descripción">
         </div>
 
         <div class="form-group">
