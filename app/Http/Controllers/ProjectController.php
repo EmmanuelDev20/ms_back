@@ -144,9 +144,10 @@ class ProjectController extends Controller
         if ($request->file('url_main_image')) {
             $name = Str::random(10) . $request->file('url_main_image')->getClientOriginalName();
             $ruta = storage_path() . '\app\public\images/' . $name;
+            $probandoruta = public_path('storage/images/'.$name);
             Image::make($request->file('url_main_image'))->resize(1200, null, function ($constraint) {
                 $constraint->aspectRatio();
-            })->save($ruta);
+            })->save($probandoruta);
 
             $new_url_main_image = '/storage/images/' . $name;
             $project->url_main_image = $new_url_main_image;
