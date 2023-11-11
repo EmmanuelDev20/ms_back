@@ -14,6 +14,7 @@
         .main-title {
             font-weight: bold;
         }
+
         .images-title {
             font-size: 2rem;
             margin-top: 4rem;
@@ -31,9 +32,11 @@
         .image-container {
             position: relative;
         }
+
         .image-container img {
             border-radius: 10px;
         }
+
         .controls-images {
             position: absolute;
             bottom: 0;
@@ -50,20 +53,22 @@
     </form>
 
     @if (count($images) > 0)
-    <h1 class="images-title">Agregadas</h1>
+        <h1 class="images-title">Agregadas</h1>
 
-    <div class="images-container">
+        <div class="images-container" id="sortableItems">
             @foreach ($images as $image)
-                <div class="image-container">
+                <div class="image-container" data-id="{{ $image->id }}">
                     <img src="{{ asset($image->url) }}" class="w-100" alt="Responsive image">
 
                     <div class="btn-group controls-images">
 
                         {{-- <form class="inline-block" action="{{ route('images.destroy', $image, $project) }}" method="POST"> --}}
-                        <form class="inline-block" action="{{ route('images.destroy', [
-                            'image' => $image,
-                            'project' => $project
-                        ])}}" method="POST">
+                        <form class="inline-block"
+                            action="{{ route('images.destroy', [
+                                'image' => $image,
+                                'project' => $project,
+                            ]) }}"
+                            method="POST">
                             @csrf
                             @method('delete')
                             <button class="btn btn-danger" type="submit">
@@ -89,6 +94,29 @@
             thumbnailWidth: 200,
             acceptedFiles: ".jpg,.jpeg,.png"
         })
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script>
+        new Sortable(sortableItems, {
+            animation: 150,
+            store: {
+                set: function(sortable) {
+                    const sorts = sortable.toArray()
+
+                    axios.post("{{ route('admin.sortImages')}}", {
+                        sorts: sorts
+                    }).then(function (response) {
+                        console.log(response)
+                    })
+                    .catch(function(err) {
+                        console.log(err)
+                    })
+                }
+            }
+        });
     </script>
     {{-- <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script> --}}
 

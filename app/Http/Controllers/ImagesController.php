@@ -13,8 +13,21 @@ class ImagesController extends Controller
 {
     public function index(Project $project)
     {
+        // $images = $project->images;
         $images = $project->images;
         return view('admin.images.index', compact('project', 'images'));
+    }
+
+    public function sortImages(Request $request) {
+        $position = 1;
+        $sorts = $request->sorts;
+
+        foreach($sorts as $sort) {
+            $image = Images::find($sort);
+            $image->position = $position;
+            $image->save();
+            $position++;
+        }
     }
 
     public function create()

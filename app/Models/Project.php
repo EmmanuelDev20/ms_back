@@ -18,6 +18,6 @@ class Project extends Model implements TranslatableContract
     public $translatedAttributes = ['name', 'subtitle', 'description', 'work_made'];
 
     public function images() {
-        return $this->hasMany(Images::class);
+        return $this->hasMany(Images::class)->orderBy('position', 'asc');
     }
 }

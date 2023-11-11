@@ -37,4 +37,4 @@ Route::get('/locale/{locale}', function($locale) {
     App::setLocale($locale);
 });
 
-
+Route::post('/images/changePosition', [ImagesController::class, 'sortImages'])->name('admin.sortImages');
