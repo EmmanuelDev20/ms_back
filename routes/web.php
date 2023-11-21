@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::match(['get', 'post'], 'register', function () {
+    abort(404);
+});
+
 Route::get('/', function () {
     return view('welcome');
 });
