@@ -23,10 +23,6 @@
             <img src="{{asset($project->url_main_image)}}" class="w-25 mb-4" alt="Responsive image">
         @endif
 
-        {{-- {{ $spanish_data }}
-        {{ $english_data }} --}}
-
-        {{-- {{ $english_data }} --}}
         <h2 class="title-spanish">Información en español</h2>
 
         <div class="form-group">
@@ -107,7 +103,7 @@
             <input
             type="text"
             class="form-control"
-            value="{{ $english_data->subtitle }}"
+            value="{{ $english_data->description }}"
             id="description_english"
             name="description_english"
             aria-describedby="emailHelp"

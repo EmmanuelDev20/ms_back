@@ -143,7 +143,7 @@ class ProjectController extends Controller
 
         if ($request->file('url_main_image')) {
             $name = Str::random(10) . $request->file('url_main_image')->getClientOriginalName();
-            $ruta = storage_path() . '\app\public\images/' . $name;
+            // $ruta = storage_path() . '\app\public\images/' . $name;
             $probandoruta = public_path('storage/images/'.$name);
             Image::make($request->file('url_main_image'))->resize(1200, null, function ($constraint) {
                 $constraint->aspectRatio();
@@ -155,22 +155,37 @@ class ProjectController extends Controller
 
         foreach ($project->translations as $project_lang) :
             if ($project_lang->locale === 'es') :
-                $project_lang->name = $request->name;
-                $project_lang->subtitle = $request->subtitle;
-                $project_lang->description = $request->description;
-                $project_lang->work_made = $request->work_made;
+            $project_lang->update([
+                'name' => $request->name,
+                'subtitle' => $request->subtitle,
+                'description' => $request->description,
+                'work_made' => $request->work_made
+            ]);
             else :
-                $project_lang->name = $request->name_english;
-                $project_lang->subtitle = $request->subtitle_english;
-                $project_lang->description = $request->description_english;
-                $project_lang->work_made = $request->work_made_english;
+            $project_lang->update([
+                'name' => $request->name_english,
+                'subtitle' => $request->subtitle_english,
+                'description' => $request->description_english,
+                'work_made' => $request->work_made_english
+            ]);
             endif;
         endforeach;
 
-        // if()
+        // foreach ($project->translations as $project_lang) :
+        //     if ($project_lang->locale === 'es') :
+        //         $project_lang->name = $request->name;
+        //         $project_lang->subtitle = $request->subtitle;
+        //         $project_lang->description = $request->description;
+        //         $project_lang->work_made = $request->work_made;
+        //     else :
+        //         $project_lang->name = $request->name_english;
+        //         $project_lang->subtitle = $request->subtitle_english;
+        //         $project_lang->description = $request->description_english;
+        //         $project_lang->work_made = $request->work_made_english;
+        //     endif;
+        // endforeach;
 
-
-        $project->save();
+        // $project->save();
 
         return redirect()->route('project.index');
     }
