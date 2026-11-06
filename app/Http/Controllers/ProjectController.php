@@ -5,24 +5,32 @@ namespace App\Http\Controllers;
 use App\Models\Images;
 use App\Models\Project;
 use App\Models\ProjectTranslation;
+use App\Http\Controllers\Controller;
+use App\Services\ImageService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
 use Illuminate\Support\Str;
 
 class ProjectController extends Controller
 {
+    protected ImageService $imageService;
+
+    public function __construct(ImageService $imageService)
+    {
+        $this->imageService = $imageService;
+    }
+
     public function index_api()
     {
         $projects = Project::all();
         return $projects;
     }
-    public function show_api($id)
-    {
-        $projects = Project::with('images')->findOrFail($id);
 
-        return $projects;
+    public function show_api($slug)
+    {
+        $project = Project::with('images')->where('slug', $slug)->firstOrFail();
+        return $project;
     }
+
     public function index()
     {
         $projects = Project::all();
@@ -39,28 +47,20 @@ class ProjectController extends Controller
         $request->validate([
             'url_main_image' => 'image',
             'name' => 'required',
-            'name_english' => 'required'
+            'name_english' => 'required',
+            'gallery_images.*' => 'image|mimes:jpg,jpeg,png|max:10240',
         ]);
-        // $probando_ruta
-        // C:\xampp\htdocs\js_projects\ms_ingenieria\ms_scratch_jet_back\storage\app\public\images/cGDBnGDTXIExterior A full.jpg
-        // $ruta
-        // C:\xampp\htdocs\js_projects\ms_ingenieria\ms_scratch_jet_back\public\images/ng0g883BD1Exterior A full.jpg
-        // $probandoruta = storage_path() . '\app\public\images/' . $name;
-        // $ruta = public_path('images/'.$name);
-        if ($request->file('url_main_image')) {
-            $name = Str::random(10) . $request->file('url_main_image')->getClientOriginalName();
-            // $ruta = storage_path() . '\app\public\images/' . $name;
-            $ruta = storage_path("app\public\images/".$name);
-            $probandoruta = public_path('storage/images/'.$name);
-            // dd($ruta, $probandoruta);
 
-            Image::make($request->file('url_main_image'))->resize(1200, null, function ($constraint) {
-                $constraint->aspectRatio();
-            })->save($probandoruta);
+        $mainImageUrl = null;
+        if ($request->file('url_main_image')) {
+            $mainImageUrl = $this->imageService->upload($request->file('url_main_image'));
         }
 
+        $slug = $this->uniqueSlug(Str::slug($request->name));
+
         $project = Project::create([
-            'url_main_image' => $request->file('url_main_image') ? '/storage/images/' . $name : null
+            'url_main_image' => $mainImageUrl,
+            'slug'           => $slug,
         ]);
 
         ProjectTranslation::create([
@@ -69,7 +69,7 @@ class ProjectController extends Controller
             'name' => $request->name,
             'subtitle' => $request->subtitle,
             'description' => $request->description,
-            'work_made' => $request->work_made
+            'work_made' => $request->work_made,
         ]);
 
         ProjectTranslation::create([
@@ -78,45 +78,32 @@ class ProjectController extends Controller
             'name' => $request->name_english,
             'subtitle' => $request->subtitle_english,
             'description' => $request->description_english,
-            'work_made' => $request->work_made_english
+            'work_made' => $request->work_made_english,
         ]);
 
+        if ($request->hasFile('gallery_images')) {
+            $layouts  = $request->input('gallery_layouts', []);
+            $position = 1;
+            foreach ($request->file('gallery_images') as $index => $file) {
+                $url = $this->imageService->upload($file);
+                Images::create([
+                    'project_id' => $project->id,
+                    'url'        => $url,
+                    'position'   => $position,
+                    'layout'     => $layouts[$index] ?? null,
+                ]);
+                $position++;
+            }
+        }
+
+        $this->triggerNuxtBuild();
         return redirect()->route('project.index');
     }
 
     public function images(Project $project)
     {
-        return view('admin.projects.images', compact('project'));
-    }
-
-    public function storeimages(Request $request)
-    {
-        $image = $request->file('file');
-        $imageName = time() . rand(1, 100) . '.' . $image->extension();
-        $image->move(public_path('images'), $imageName);
-        // return response()->json(['success' => $imageName]);
-        //first try
-        // $images = $request->file('file')->store('public/images');
-        // $url = Storage::url($images);
-
-        // Images::create([
-        //     'url' => $url,
-        //     'project_id' => $project->id
-        // ]);
-        // second try
-        // if ($request->file('file')) {
-        //     $name = Str::random(10) . $request->file('file')->getClientOriginalName();
-        //     $ruta = storage_path() . '\app\public\images/' . $name;
-        //     Image::make($request->file('file'))->resize(1200, null, function ($constraint) {
-        //         $constraint->aspectRatio();
-        //     })->save($ruta);
-        // }
-
-        // Images::create([
-        //     'url' => '/storage/images/' . $name,
-        //     'project_id' => $project->id
-        // ]);
-        // return view('admin.projects.images', compact('project'));
+        $images = $project->images;
+        return view('admin.images.index', compact('project', 'images'));
     }
 
     public function edit(Project $project)
@@ -138,61 +125,106 @@ class ProjectController extends Controller
     public function update(Request $request, Project $project)
     {
         $request->validate([
-            'url_main_image' => 'image'
+            'url_main_image' => 'image',
+            'gallery_images.*' => 'image|mimes:jpg,jpeg,png|max:10240',
         ]);
 
         if ($request->file('url_main_image')) {
-            $name = Str::random(10) . $request->file('url_main_image')->getClientOriginalName();
-            // $ruta = storage_path() . '\app\public\images/' . $name;
-            $probandoruta = public_path('storage/images/'.$name);
-            Image::make($request->file('url_main_image'))->resize(1200, null, function ($constraint) {
-                $constraint->aspectRatio();
-            })->save($probandoruta);
-
-            $new_url_main_image = '/storage/images/' . $name;
-            $project->url_main_image = $new_url_main_image;
+            if ($project->url_main_image) {
+                $this->imageService->delete($project->url_main_image);
+            }
+            $project->url_main_image = $this->imageService->upload($request->file('url_main_image'));
         }
 
         foreach ($project->translations as $project_lang) :
             if ($project_lang->locale === 'es') :
-            $project_lang->update([
-                'name' => $request->name,
-                'subtitle' => $request->subtitle,
-                'description' => $request->description,
-                'work_made' => $request->work_made
-            ]);
+                if ($request->name && Str::slug($request->name) !== Str::slug($project_lang->name)) {
+                    $project->slug = $this->uniqueSlug(Str::slug($request->name), $project->id);
+                }
+                $project_lang->update([
+                    'name' => $request->name,
+                    'subtitle' => $request->subtitle,
+                    'description' => $request->description,
+                    'work_made' => $request->work_made,
+                ]);
             else :
-            $project_lang->update([
-                'name' => $request->name_english,
-                'subtitle' => $request->subtitle_english,
-                'description' => $request->description_english,
-                'work_made' => $request->work_made_english
-            ]);
+                $project_lang->update([
+                    'name' => $request->name_english,
+                    'subtitle' => $request->subtitle_english,
+                    'description' => $request->description_english,
+                    'work_made' => $request->work_made_english,
+                ]);
             endif;
         endforeach;
 
-        // foreach ($project->translations as $project_lang) :
-        //     if ($project_lang->locale === 'es') :
-        //         $project_lang->name = $request->name;
-        //         $project_lang->subtitle = $request->subtitle;
-        //         $project_lang->description = $request->description;
-        //         $project_lang->work_made = $request->work_made;
-        //     else :
-        //         $project_lang->name = $request->name_english;
-        //         $project_lang->subtitle = $request->subtitle_english;
-        //         $project_lang->description = $request->description_english;
-        //         $project_lang->work_made = $request->work_made_english;
-        //     endif;
-        // endforeach;
+        $project->save();
 
-        // $project->save();
+        if ($request->hasFile('gallery_images')) {
+            $layouts     = $request->input('gallery_layouts', []);
+            $maxPosition = $project->images->max('position') ?? 0;
+            $position    = $maxPosition + 1;
+            foreach ($request->file('gallery_images') as $index => $file) {
+                $url = $this->imageService->upload($file);
+                Images::create([
+                    'project_id' => $project->id,
+                    'url'        => $url,
+                    'position'   => $position,
+                    'layout'     => $layouts[$index] ?? null,
+                ]);
+                $position++;
+            }
+        }
 
+        $this->triggerNuxtBuild();
         return redirect()->route('project.index');
     }
 
     public function destroy(Project $project)
     {
+        foreach ($project->images as $image) {
+            $this->imageService->delete($image->url);
+        }
+
+        if ($project->url_main_image) {
+            $this->imageService->delete($project->url_main_image);
+        }
+
         $project->delete();
         return redirect()->route('project.index');
+    }
+
+    public function setLayout(Request $request, Project $project)
+    {
+        $project->layout = $request->layout;
+        $project->save();
+        return redirect()->route('images.index', $project)->with('success', 'Layout guardado.');
+    }
+
+    private function triggerNuxtBuild(): void
+    {
+        $hook = env('NETLIFY_BUILD_HOOK');
+        if (!$hook) return;
+
+        $ch = curl_init($hook);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, '{}');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        curl_exec($ch);
+        curl_close($ch);
+    }
+
+    private function uniqueSlug(string $base, ?int $exceptId = null): string
+    {
+        $slug = $base;
+        $i    = 2;
+        while (
+            Project::where('slug', $slug)
+                ->when($exceptId, fn($q) => $q->where('id', '!=', $exceptId))
+                ->exists()
+        ) {
+            $slug = $base . '-' . $i++;
+        }
+        return $slug;
     }
 }

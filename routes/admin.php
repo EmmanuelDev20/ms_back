@@ -38,3 +38,10 @@ Route::get('/locale/{locale}', function($locale) {
 });
 
 Route::post('/images/changePosition', [ImagesController::class, 'sortImages'])->name('admin.sortImages');
+
+Route::post('/proyectos/{project}/layout', [ProjectController::class, 'setLayout'])->name('project.setLayout');
+Route::patch('/proyectos/{project}/images/{image}/layout', [ImagesController::class, 'setImageLayout'])->name('images.setLayout');
+
+Route::post('/proyectos/{project}/blocks/{blockId}/images', [ImagesController::class, 'storeInBlock'])->name('images.storeInBlock');
+Route::patch('/proyectos/{project}/blocks/{blockId}/layout', [ImagesController::class, 'setBlockLayout'])->name('images.setBlockLayout');
+Route::delete('/proyectos/{project}/blocks/{blockId}', [ImagesController::class, 'destroyBlock'])->name('images.destroyBlock');
