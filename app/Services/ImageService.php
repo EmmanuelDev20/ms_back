@@ -13,7 +13,7 @@ class ImageService
 
     public function __construct()
     {
-        $this->disk = config('filesystems.default', 'local');
+        $this->disk = config('filesystems.images', 'r2');
     }
 
     public function upload(UploadedFile $file, string $folder = 'images'): string

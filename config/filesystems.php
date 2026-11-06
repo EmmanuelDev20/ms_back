@@ -15,6 +15,9 @@ return [
 
     'default' => env('FILESYSTEM_DRIVER', 'local'),
 
+    // Disk used for uploaded project/config images (Cloudflare R2 by default).
+    'images' => env('IMAGE_DISK', 'r2'),
+
     /*
     |--------------------------------------------------------------------------
     | Filesystem Disks
