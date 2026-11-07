@@ -4,11 +4,15 @@ namespace App\Services;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 use Illuminate\Support\Str;
 
 class ImageService
 {
+    /** Maximum width (px) for stored images. Smaller images are never upscaled. */
+    public const MAX_WIDTH = 800;
+
     protected string $disk;
 
     public function __construct()
@@ -20,11 +24,11 @@ class ImageService
     {
         $name = Str::random(10) . $file->getClientOriginalName();
 
-        $resized = Image::make($file)->resize(1200, null, function ($constraint) {
-            $constraint->aspectRatio();
-        });
+        $image = (new ImageManager(new Driver()))
+            ->read($file->getRealPath())
+            ->scaleDown(width: self::MAX_WIDTH);
 
-        $contents = (string) $resized->encode();
+        $contents = (string) $image->encode();
         $path = $folder . '/' . $name;
 
         Storage::disk($this->disk)->put($path, $contents);

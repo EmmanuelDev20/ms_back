@@ -17,4 +17,12 @@ class Config extends Model implements TranslatableContract
 
     public $translatedAttributes = ['home_description', 'about_us_description'];
 
+    /**
+     * The site has a single configuration row. Create it (empty) if it doesn't exist yet.
+     */
+    public static function current(): self
+    {
+        return static::with('translations')->first() ?? static::create()->load('translations');
+    }
+
 }

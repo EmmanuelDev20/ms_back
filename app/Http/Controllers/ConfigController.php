@@ -18,27 +18,15 @@ class ConfigController extends Controller
 
     public function index_api()
     {
-        $configs = Config::all();
-        $result = $configs[0]->translate('en');
-        return $configs[0];
+        return Config::current();
     }
 
     public function index()
     {
-        $configArray = Config::all();
+        $config = Config::current();
+        $spanish_data = $config->translateOrNew('es');
+        $english_data = $config->translateOrNew('en');
 
-        $spanish_data = [];
-        $english_data = [];
-
-        foreach ($configArray[0]->translations as $conf) :
-            if ($conf->locale === 'es') :
-                $spanish_data = $conf;
-            else :
-                $english_data = $conf;
-            endif;
-        endforeach;
-
-        $config = $configArray[0];
         return view('admin.config.index', compact('config', 'spanish_data', 'english_data'));
     }
 
@@ -91,15 +79,13 @@ class ConfigController extends Controller
             }
         }
 
-        foreach ($config->translations as $conf) :
-            if ($conf->locale === 'es') :
-                $conf->home_description = $request->home_description;
-                $conf->about_us_description = $request->about_us_description;
-            else :
-                $conf->home_description = $request->home_description_english;
-                $conf->about_us_description = $request->about_us_description_english;
-            endif;
-        endforeach;
+        $spanish = $config->translateOrNew('es');
+        $spanish->home_description = $request->home_description;
+        $spanish->about_us_description = $request->about_us_description;
+
+        $english = $config->translateOrNew('en');
+        $english->home_description = $request->home_description_english;
+        $english->about_us_description = $request->about_us_description_english;
 
         $config->save();
 

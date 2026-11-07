@@ -71,7 +71,9 @@
             @enderror
         </div>
 
-        <img src="{{asset($config->home_image)}}" class="w-25 mb-4" alt="Responsive image">
+        @if ($config->home_image)
+            <img src="{{ asset($config->home_image) }}" class="w-25 mb-4" alt="Responsive image">
+        @endif
 
         <div class="custom-file mb-4">
             <input type="file" accept="image/*" name="first_image" class="custom-file-input" id="first_image">
@@ -81,7 +83,9 @@
             @enderror
         </div>
 
-        <img src="{{asset($config->first_image)}}" class="w-25 mb-4" alt="Responsive image">
+        @if ($config->first_image)
+            <img src="{{ asset($config->first_image) }}" class="w-25 mb-4" alt="Responsive image">
+        @endif
 
         <div class="custom-file mb-4">
             <input type="file" accept="image/*" name="second_image" class="custom-file-input" id="second_image">
@@ -91,7 +95,9 @@
             @enderror
         </div>
 
-        <img src="{{asset($config->second_image)}}" class="w-25 mb-4" alt="Responsive image">
+        @if ($config->second_image)
+            <img src="{{ asset($config->second_image) }}" class="w-25 mb-4" alt="Responsive image">
+        @endif
 
         <div class="custom-file mb-4">
             <input type="file" accept="image/*" name="third_image" class="custom-file-input" id="third_image">
@@ -101,7 +107,9 @@
             @enderror
         </div>
 
-        <img src="{{asset($config->third_image)}}" class="w-25 mb-4" alt="Responsive image">
+        @if ($config->third_image)
+            <img src="{{ asset($config->third_image) }}" class="w-25 mb-4" alt="Responsive image">
+        @endif
 
         <div class="custom-file mb-4">
             <input type="file" accept="image/*" name="about_image" class="custom-file-input" id="about_image">
@@ -111,7 +119,9 @@
             @enderror
         </div>
 
-        <img src="{{asset($config->about_image)}}" class="w-25 mb-4" alt="Responsive image">
+        @if ($config->about_image)
+            <img src="{{ asset($config->about_image) }}" class="w-25 mb-4" alt="Responsive image">
+        @endif
 
         <button type="submit" class="btn btn-primary d-block mb-4">Guardar cambios</button>
         <div class="pb-5">

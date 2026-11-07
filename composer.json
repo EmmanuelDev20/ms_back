@@ -8,7 +8,7 @@
         "php": "^8.5",
         "astrotomic/laravel-translatable": "^11.9",
         "guzzlehttp/guzzle": "^7.0.1",
-        "intervention/image": "^2.7",
+        "intervention/image": "^3",
         "jeroennoten/laravel-adminlte": "^3.13",
         "laravel/framework": "^10.0",
         "laravel/jetstream": "^4.0",
