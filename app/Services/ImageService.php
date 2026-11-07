@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 class ImageService
 {
     /** Maximum width (px) for stored images. Smaller images are never upscaled. */
-    public const MAX_WIDTH = 800;
+    public const MAX_WIDTH = 1200;
 
     protected string $disk;
 
