@@ -20,8 +20,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/config', [ConfigController::class, 'index_api'])->name('api.config.index');
+// Only the Nuxt build on Netlify may read these (see VerifyBuildToken).
+Route::middleware('build.token')->group(function () {
+    Route::get('/config', [ConfigController::class, 'index_api'])->name('api.config.index');
 
-Route::get('/proyectos', [ProjectController::class, 'index_api'])->name('api.projects.index');
+    Route::get('/proyectos', [ProjectController::class, 'index_api'])->name('api.projects.index');
 
-Route::get('/proyectos/{project}', [ProjectController::class, 'show_api'])->name('api.projects.show');
+    Route::get('/proyectos/{project}', [ProjectController::class, 'show_api'])->name('api.projects.show');
+});

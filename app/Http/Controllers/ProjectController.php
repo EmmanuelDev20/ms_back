@@ -25,7 +25,7 @@ class ProjectController extends Controller
         return $projects;
     }
 
-    public function show_api($slug)
+    public function show_api(string $slug)
     {
         $project = Project::with('images')->where('slug', $slug)->firstOrFail();
         return $project;
@@ -138,7 +138,8 @@ class ProjectController extends Controller
 
         foreach ($project->translations as $project_lang) :
             if ($project_lang->locale === 'es') :
-                if ($request->name && Str::slug($request->name) !== Str::slug($project_lang->name)) {
+                // Regenerate the slug when the Spanish name changes, or if the project never had one.
+                if ($request->name && (!$project->slug || Str::slug($request->name) !== Str::slug($project_lang->name))) {
                     $project->slug = $this->uniqueSlug(Str::slug($request->name), $project->id);
                 }
                 $project_lang->update([
@@ -211,7 +212,6 @@ class ProjectController extends Controller
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
         curl_exec($ch);
-        curl_close($ch);
     }
 
     private function uniqueSlug(string $base, ?int $exceptId = null): string

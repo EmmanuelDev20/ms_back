@@ -30,4 +30,9 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    // Token the Nuxt build (Netlify) sends to read /api/v1/*.
+    'build_api' => [
+        'token' => env('BUILD_API_TOKEN'),
+    ],
+
 ];
